@@ -139,7 +139,6 @@ JWT_SECRET=your_jwt_secret
 OPENROUTER_API_KEY=your_openrouter_key
 RAZORPAY_KEY_ID=your_key
 RAZORPAY_KEY_SECRET=your_secret
-CLIENT_URLS=http://localhost:5173
 NODE_ENV=development
 ```
 
@@ -148,7 +147,6 @@ NODE_ENV=development
 ```env
 VITE_FIREBASE_APIKEY=your_key
 VITE_RAZORPAY_KEY_ID=your_key
-VITE_SERVER_URL=http://localhost:8000
 ```
 
 ---
