@@ -6,7 +6,7 @@ PrepWise is a full-stack AI-powered mock interview platform that helps candidate
 
 ## 🌐 Live Demo
 
-🔗 **Frontend:** https://prepwiseai.onrender.com/
+🔗 **Frontend:** https://prepwiseai.onrender.com/ <br>
 🔗 **Backend API:** https://ai-interview-system-nsjo.onrender.com
 
 ---
