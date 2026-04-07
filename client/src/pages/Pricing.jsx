@@ -11,7 +11,7 @@ function Pricing() {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState("free");
   const [loadingPlan, setLoadingPlan] = useState(null);
-  const dispatch = useDispatch;
+  const dispatch = useDispatch();
 
   const plans = [
     {
@@ -92,6 +92,10 @@ function Pricing() {
             theme: {
                 color: "#10b981"
             },
+        }
+
+        if (!window.Razorpay) {
+          throw new Error("Razorpay SDK is not loaded");
         }
 
         const rzp = new window.Razorpay(options)

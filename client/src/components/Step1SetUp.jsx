@@ -209,7 +209,7 @@ function Step1SetUp({onStart}) {
                         onClick={handleStart}
                         disabled={!role || !experience || loading}
                         whileHover={{scale:1.03}}
-                        whileTemp={{scale:0.95}}
+                        whileTap={{scale:0.95}}
                         className='w-full disabled:bg-gray-600 bg-green-500 hover:bg-green-700 text-white py-3 rounded-full text-lg font-semibold transition duration-300 shadow-md'>
                             {loading ? "Starting..." : "Start Interview"}
                         </motion.button>
