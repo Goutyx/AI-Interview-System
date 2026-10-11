@@ -38,10 +38,10 @@ function Home() {
             animate={{opacity:1, y:0}}
             transition={{duration:0.6}}
             className='text-4xl md:text-6xl font-semibold leading-tight max-w-4xl mx-auto'>
-              Practise Interview with 
+              Practise Interview with your Personal
               <span className='relative inline-block'>
-                <span className='bg-green-100 text-green-600 px-5 py-1 rounded-full'>
-                  AI Intelligence
+                <span className='bg-violet-100 text-black-600 px-5 py-1 rounded-full'>
+                  AI Interview Coach
                 </span>
               </span>
             </motion.h1>
