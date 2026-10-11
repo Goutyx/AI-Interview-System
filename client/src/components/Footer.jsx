@@ -10,7 +10,7 @@ function Footer(){
                         <BsRobot size={16}/>
                     </div>
                     <h2 className='font-semibold'>
-                        Interview AI
+                        PrepWise
                     </h2>
                 </div>
                 <p className='text-gray-500 text-sm max-w-xl mx-auto'>
