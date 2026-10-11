@@ -89,8 +89,6 @@ function Home() {
     },
   ];
 
-
-
   return (
     <div className="min-h-screen bg-[#fafafa] text-gray-900 flex flex-col overflow-hidden">
       <Navbar />
@@ -100,11 +98,11 @@ function Home() {
         <section className="relative px-6 pt-20 pb-24 md:pt-28 md:pb-32">
           {/* Background Glow */}
           <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-            <div className="absolute top-[-180px] left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-violet-200/30 blur-[130px] rounded-full" />
+            <div className="absolute top-[-180px] left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-gradient-to-r from-violet-300/30 via-purple-300/25 to-indigo-300/30 blur-[130px] rounded-full" />
 
-            <div className="absolute top-[350px] left-[-200px] w-[350px] h-[350px] bg-indigo-100/30 blur-[100px] rounded-full" />
+            <div className="absolute top-[350px] left-[-200px] w-[350px] h-[350px] bg-gradient-to-br from-violet-200/30 to-indigo-200/20 blur-[100px] rounded-full" />
 
-            <div className="absolute top-[500px] right-[-200px] w-[350px] h-[350px] bg-violet-100/30 blur-[100px] rounded-full" />
+            <div className="absolute top-[500px] right-[-200px] w-[350px] h-[350px] bg-gradient-to-br from-purple-200/30 to-violet-200/20 blur-[100px] rounded-full" />
           </div>
 
           <div className="max-w-6xl mx-auto">
@@ -116,7 +114,7 @@ function Home() {
               className="flex justify-center mb-7"
             >
               <div className="bg-white border border-gray-200 shadow-sm text-gray-700 text-sm px-4 py-2 rounded-full flex items-center gap-2">
-                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-violet-100 text-violet-600">
+                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-br from-violet-100 via-purple-100 to-indigo-100 text-violet-600">
                   <HiSparkles size={13} />
                 </span>
 
@@ -135,9 +133,9 @@ function Home() {
                 Practice Interviews.
                 <br />
 
-                <br />
-
-                <span className="text-gray-400">Get Hired.</span>
+                <span className="bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                  Get Hired.
+                </span>
               </motion.h1>
 
               <motion.p
@@ -162,10 +160,12 @@ function Home() {
                   onClick={() => handleProtectedNavigation("/interview")}
                   whileHover={{ scale: 1.03, y: -2 }}
                   whileTap={{ scale: 0.98 }}
-                  className="bg-black text-white px-7 py-3.5 rounded-full shadow-lg shadow-black/10 flex items-center gap-2 font-medium transition"
+                  className="relative overflow-hidden bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 text-white px-7 py-3.5 rounded-full shadow-lg shadow-violet-500/20 flex items-center gap-2 font-medium transition"
                 >
-                  Start Mock Interview
-                  <BsArrowRight size={17} />
+                  <span className="relative z-10 flex items-center gap-2">
+                    Start Mock Interview
+                    <BsArrowRight size={17} />
+                  </span>
                 </motion.button>
 
                 <motion.button
@@ -191,12 +191,12 @@ function Home() {
                 </span>
 
                 <span className="flex items-center gap-1.5">
-                  <BsCheckCircleFill className="text-violet-500" />
+                  <BsCheckCircleFill className="text-purple-500" />
                   Role-Based Practice
                 </span>
 
                 <span className="flex items-center gap-1.5">
-                  <BsCheckCircleFill className="text-violet-500" />
+                  <BsCheckCircleFill className="text-indigo-500" />
                   Performance Analytics
                 </span>
               </motion.div>
@@ -208,7 +208,7 @@ function Home() {
         <section className="px-6 pb-28">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <p className="text-sm font-semibold tracking-widest text-violet-600 mb-3">
+              <p className="text-sm font-semibold tracking-widest bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 bg-clip-text text-transparent mb-3">
                 HOW IT WORKS
               </p>
 
@@ -236,11 +236,11 @@ function Home() {
                   whileHover={{ y: -6 }}
                   className="relative z-10 bg-white border border-gray-200 rounded-3xl p-8 shadow-sm hover:shadow-xl transition-all duration-300"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-violet-50 border border-violet-100 text-violet-600 flex items-center justify-center mb-7">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-100 via-purple-100 to-indigo-100 border border-violet-200/60 text-violet-600 flex items-center justify-center mb-7 shadow-sm">
                     {item.icon}
                   </div>
 
-                  <div className="text-xs text-violet-600 font-semibold tracking-widest mb-2">
+                  <div className="text-xs bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 bg-clip-text text-transparent font-semibold tracking-widest mb-2">
                     {item.step}
                   </div>
 
@@ -261,7 +261,7 @@ function Home() {
         <section className="px-6 py-20 md:py-28 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <p className="text-sm font-semibold tracking-widest text-violet-600 mb-3">
+              <p className="text-sm font-semibold tracking-widest bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 bg-clip-text text-transparent mb-3">
                 POWERFUL FEATURES
               </p>
 
@@ -273,7 +273,9 @@ function Home() {
                 className="text-3xl md:text-4xl font-semibold tracking-tight"
               >
                 Everything you need to{" "}
-                <span className="text-violet-600">ace your interview</span>
+                <span className="bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                  ace your interview
+                </span>
               </motion.h2>
 
               <p className="text-gray-500 mt-4 max-w-2xl mx-auto">
@@ -303,7 +305,7 @@ function Home() {
                           className="w-full h-auto object-contain max-h-60 rounded-xl"
                         />
 
-                        <div className="absolute -top-3 -right-3 w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center shadow-lg">
+                        <div className="absolute -top-3 -right-3 w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 via-purple-500 to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-violet-500/20">
                           {item.icon}
                         </div>
                       </div>
@@ -311,7 +313,7 @@ function Home() {
 
                     {/* Content */}
                     <div className="w-full md:w-1/2">
-                      <div className="bg-violet-50 text-violet-600 w-11 h-11 rounded-xl flex items-center justify-center mb-5">
+                      <div className="bg-gradient-to-br from-violet-100 via-purple-100 to-indigo-100 text-violet-600 w-11 h-11 rounded-xl flex items-center justify-center mb-5 border border-violet-200/50">
                         {item.icon}
                       </div>
 
@@ -323,12 +325,90 @@ function Home() {
                         {item.desc}
                       </p>
 
-                      <div className="flex items-center gap-2 text-violet-600 text-sm font-medium mt-5">
+                      <div className="flex items-center gap-2 bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 bg-clip-text text-transparent text-sm font-medium mt-5">
                         Explore feature
-                        <BsArrowRight size={15} />
+                        <BsArrowRight
+                          size={15}
+                          className="text-violet-500"
+                        />
                       </div>
                     </div>
                   </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* INTERVIEW MODES */}
+        <section className="px-6 py-20 md:py-28">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <p className="text-sm font-semibold tracking-widest bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 bg-clip-text text-transparent mb-3">
+                INTERVIEW MODES
+              </p>
+
+              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">
+                Practice for every interview
+              </h2>
+
+              <p className="text-gray-500 mt-4 max-w-2xl mx-auto">
+                Prepare for different interview formats and build confidence
+                across every stage of the hiring process.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                {
+                  image: hrImg,
+                  title: "HR Interview",
+                  desc: "Practice behavioral and situational questions.",
+                },
+                {
+                  image: techImg,
+                  title: "Technical Interview",
+                  desc: "Test your technical knowledge and problem-solving.",
+                },
+                {
+                  image: confidenceImg,
+                  title: "Voice Interview",
+                  desc: "Improve communication and speaking confidence.",
+                },
+                {
+                  image: resumeImg,
+                  title: "Resume Interview",
+                  desc: "Get questions based directly on your resume.",
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.08 }}
+                  whileHover={{ y: -7 }}
+                  className="group bg-white border border-gray-200 rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all duration-300"
+                >
+                  <div className="overflow-hidden rounded-2xl bg-gray-50 mb-5">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-44 object-contain group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 rounded-full bg-gradient-to-r from-violet-600 to-indigo-500" />
+
+                    <h3 className="font-semibold text-lg">
+                      {item.title}
+                    </h3>
+                  </div>
+
+                  <p className="text-gray-500 text-sm leading-relaxed">
+                    {item.desc}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -345,12 +425,15 @@ function Home() {
               transition={{ duration: 0.6 }}
               className="relative overflow-hidden rounded-[2rem] bg-black text-white px-8 py-16 md:px-16 md:py-20 text-center"
             >
-              {/* CTA Glow */}
-              <div className="absolute top-[-150px] left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-violet-600/30 blur-[100px] rounded-full" />
+              {/* CTA Gradient Glow */}
+              <div className="absolute top-[-150px] left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-r from-violet-600/30 via-purple-500/30 to-indigo-500/30 blur-[100px] rounded-full" />
+
+              {/* Additional Glow */}
+              <div className="absolute bottom-[-200px] left-1/2 -translate-x-1/2 w-[500px] h-[250px] bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-violet-500/20 blur-[100px] rounded-full" />
 
               <div className="relative z-10">
                 <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 px-4 py-2 rounded-full text-sm text-gray-300 mb-6">
-                  <HiSparkles className="text-violet-400" />
+                  <HiSparkles className="text-transparent bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text" />
                   Prepare smarter with PrepWise
                 </div>
 
@@ -367,7 +450,7 @@ function Home() {
                   onClick={() => handleProtectedNavigation("/interview")}
                   whileHover={{ scale: 1.04, y: -2 }}
                   whileTap={{ scale: 0.98 }}
-                  className="mt-8 bg-white text-black px-7 py-3.5 rounded-full font-medium inline-flex items-center gap-2 shadow-xl"
+                  className="mt-8 bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 text-white px-7 py-3.5 rounded-full font-medium inline-flex items-center gap-2 shadow-xl shadow-violet-500/20"
                 >
                   Start Your First Interview
                   <BsArrowRight size={17} />
