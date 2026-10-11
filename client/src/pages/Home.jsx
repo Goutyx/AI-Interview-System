@@ -89,28 +89,7 @@ function Home() {
     },
   ];
 
-  const interviewModes = [
-    {
-      image: hrImg,
-      title: "HR Interview",
-      desc: "Practice behavioral and communication questions commonly asked in HR rounds.",
-    },
-    {
-      image: techImg,
-      title: "Technical Interview",
-      desc: "Face role-specific technical questions with adaptive follow-ups.",
-    },
-    {
-      image: resumeImg,
-      title: "Resume Interview",
-      desc: "Get questions based on your projects, skills and experience.",
-    },
-    {
-      image: confidenceImg,
-      title: "Voice Interview",
-      desc: "Practice speaking naturally and receive insights from your interview responses.",
-    },
-  ];
+
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-gray-900 flex flex-col overflow-hidden">
@@ -155,12 +134,6 @@ function Home() {
               >
                 Practice Interviews.
                 <br />
-
-                <span className="relative inline-block mt-2">
-                  <span className="relative z-10 bg-violet-100 px-4 md:px-6 py-1 rounded-2xl">
-                    Build Confidence.
-                  </span>
-                </span>
 
                 <br />
 
@@ -354,74 +327,6 @@ function Home() {
                         Explore feature
                         <BsArrowRight size={15} />
                       </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* INTERVIEW MODES */}
-        <section className="px-6 py-20 md:py-28">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <p className="text-sm font-semibold tracking-widest text-violet-600 mb-3">
-                INTERVIEW MODES
-              </p>
-
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                className="text-3xl md:text-4xl font-semibold tracking-tight"
-              >
-                Practice your way
-              </motion.h2>
-
-              <p className="text-gray-500 mt-4 max-w-xl mx-auto">
-                Choose the interview experience that matches your next
-                opportunity.
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-5">
-              {interviewModes.map((mode, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.08 }}
-                  whileHover={{ y: -5 }}
-                  className="group bg-white border border-gray-200 rounded-3xl p-7 shadow-sm hover:shadow-xl transition-all duration-300"
-                >
-                  <div className="flex items-center justify-between gap-6">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-xl mb-3">
-                        {mode.title}
-                      </h3>
-
-                      <p className="text-gray-500 text-sm leading-relaxed">
-                        {mode.desc}
-                      </p>
-
-                      <div className="flex items-center gap-2 text-violet-600 text-sm font-medium mt-5">
-                        Start practicing
-                        <BsArrowRight
-                          size={15}
-                          className="group-hover:translate-x-1 transition"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="w-28 h-28 shrink-0 rounded-2xl bg-violet-50 flex items-center justify-center overflow-hidden">
-                      <img
-                        src={mode.image}
-                        alt={mode.title}
-                        className="w-24 h-24 object-contain group-hover:scale-105 transition duration-300"
-                      />
                     </div>
                   </div>
                 </motion.div>
