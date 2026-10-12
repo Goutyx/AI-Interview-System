@@ -50,7 +50,7 @@ function Auth({isModel = false}) {
             </div>
             <h1 className='text-xl md:text-2xl font-semibold text-center leading-snug mb-4'>
                 Continue with <br></br>
-                <span className='bg-green-100 text-green-600 px-3 py-1 rounded-full inline-flex items-center gap-2'>
+                <span className='bg-gradient-to-br from-violet-900 via-purple-700 to-indigo-600 text-white px-3 py-1 rounded-full inline-flex items-center gap-2'>
                     <HiSparkles size={18} /> AI Smart Interview
                 </span>
             </h1>
