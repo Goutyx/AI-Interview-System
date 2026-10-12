@@ -1,334 +1,356 @@
 import React from "react";
-import { FaArrowLeft } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
-import 'react-circular-progressbar/dist/styles.css';
-import { buildStyles, CircularProgressbar } from 'react-circular-progressbar';
-import {Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts"
-import jsPDF from "jspdf"
-import autotable from "jspdf-autotable"
+import {
+  FaUserTie,
+  FaBriefcase,
+  FaFileUpload,
+  FaMicrophoneAlt,
+  FaChartLine,
+} from "react-icons/fa";
+import { useState } from "react";
+import axios from "axios";
+import { ServerUrl } from "../App";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 
-function Step3Report({ report }) {
-  if (!report) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500 text-lg">Loading Report...</p>
-      </div>
-    );
-  }
+function Step1SetUp({ onStart }) {
+  const { userData } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
-  const navigate = useNavigate();
+  const [role, setRole] = useState("");
+  const [experience, setExperience] = useState("");
+  const [mode, setMode] = useState("Technical");
+  const [resumeFile, setResumeFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [resumeText, setResumeText] = useState("");
+  const [analysisDone, setAnalysisDone] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
 
-  const {
-    finalScore = 0,
-    confidence = 0,
-    communication = 0,
-    correctness = 0,
-    questionWiseScore = [],
-  } = report;
+  const handleUploadResume = async () => {
+    if (!resumeFile || analyzing) return;
 
-  const questionScoreData = questionWiseScore.map((score, index) => ({
-    name: `Q${index + 1}`,
-    score: score.score || 0,
-  }));
+    setAnalyzing(true);
 
-  const skills = [
-    { label: "Confidence", value: confidence },
-    { label: "Communication", value: communication },
-    { label: "Correctness", value: correctness },
-  ];
+    const formdata = new FormData();
+    formdata.append("resume", resumeFile);
 
-  let performanceText = "";
-  let shortTagline = "";
+    try {
+      const result = await axios.post(
+        ServerUrl + "/api/interview/resume",
+        formdata,
+        { withCredentials: true }
+      );
 
-  if (finalScore >= 8) {
-    performanceText = "Ready for job opportunities.";
-    shortTagline = "Excellent clarity and structured responses.";
-  } else if (finalScore >= 5) {
-    performanceText = "Needs minor improvement before interviews.";
-    shortTagline = "Good foundation, refine articulation.";
-  } else {
-    performanceText = "Significant improvement required.";
-    shortTagline = "Work on clarity and confidence.";
-  }
+      console.log(result.data);
 
-  const score = finalScore;
-  const percentage = (score/10) * 100;
-
-
-  const downloadPDF = () => {
-    const doc = new jsPDF("p", "mm", "a4");
-
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 20;
-    const contentWidth = pageWidth - margin * 2;
-
-    let currentY = 25;
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(20);
-    doc.setTextColor(34,197,94);
-    doc.text("AI Interview Performance Report", pageWidth/2, currentY, { align: "center"});
-
-    currentY +=5;
-
-    doc.setDrawColor(34,197,94);
-    doc.line(margin, currentY+2, pageWidth - margin, currentY +2);
-
-    currentY += 15;
-
-    doc.setFillColor(240,253,244);
-    doc.roundedRect(margin, currentY, contentWidth, 20, 4, 4, "F");
-
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text(
-      `Final Score: ${finalScore}/10`,
-      pageWidth/2,
-      currentY + 12,
-      { align:"center"}
-    );
-
-    currentY += 30;
-
-    doc.setFillColor(249,250,251);
-    doc.roundedRect(margin, currentY, contentWidth, 30, 4, 4, "F");
-    doc.setFontSize(12);
-
-    doc.text(`Confidence: ${confidence}`, margin + 10, currentY + 10);
-    doc.text(`Communication: ${communication}`, margin + 10, currentY + 18);
-    doc.text(`Correctness: ${correctness}`, margin + 10, currentY + 26);
-
-    currentY += 45;
-
-    let advice = "";
-
-    if(finalScore >= 8){
-      advice =
-      "Excellent performance. Maintain confidence and structure. Continue refining clarity and supporting answers with strong real-world examples.";
-    }else if (finalScore >= 5){
-      advice =
-      "Good foundation shown. Improve clarity and structure. Practice delivering concise, confident answers with stronger supporting examples.";
-    }else{
-      advice =
-      "Significant improvement required. Focus on structured thinking, clarity, and confident delivery. Practice answering aloud regularly.";
+      setRole(result.data.role || "");
+      setExperience(result.data.experience || "");
+      setProjects(result.data.projects || []);
+      setSkills(result.data.skills || []);
+      setResumeText(result.data.resumeText || "");
+      setAnalysisDone(true);
+      setAnalyzing(false);
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+      setAnalyzing(false);
     }
+  };
 
-    doc.setFillColor(255,255,255);
-    doc.setDrawColor(220);
-    doc.roundedRect(margin, currentY, contentWidth, 35, 4, 4);
+  const handleStart = async () => {
+    setLoading(true);
 
-    doc.setFont("helvetica", "bold");
-    doc.text("Professional Adivce", margin + 10, currentY +10);
+    try {
+      const result = await axios.post(
+        ServerUrl + "/api/interview/generate-questions",
+        {
+          role,
+          experience,
+          mode,
+          resumeText,
+          projects,
+          skills,
+        },
+        { withCredentials: true }
+      );
 
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
+      console.log(result.data);
 
-    const splitAdvice = doc.splitTextToSize(advice, contentWidth - 20);
-    doc.text(splitAdvice, margin + 10, currentY + 20);
+      if (userData) {
+        dispatch(
+          setUserData({
+            ...userData,
+            credits: result.data.creditsLeft,
+          })
+        );
+      }
 
-    currentY += 50;
-
-    autotable(doc, {
-      startY: currentY,
-      margin: {left: margin, right: margin},
-      head: [["#", "Question", "Score", "Feedback"]],
-      body: questionWiseScore.map((q,i)=> [
-        `${i+1}`,
-        q.question,
-        `${q.score}/10`,
-        q.feedback
-      ]),
-
-      styles: {
-        fontSize: 9,
-        cellPadding: 5,
-        valign: "top"
-      },
-      headStyles: {
-        fillColor: [34, 197, 94],
-        textColor: 255,
-        halign: "center"
-      },
-      columnStyles: {
-        0: {cellWidth: 10, halign: "center"},
-        1: {cellWidth: 55},
-        2: {cellWidth: 20, halign: "center"},
-        3: {cellWidth: "auto"}
-      },
-      alternateRowStyles: {
-        fillColor: [249, 250, 251]
-      },
-    });
-    doc.save("AI_Interview_Report.pdf");
+      setLoading(false);
+      onStart(result.data);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50 px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
-      <div className="mb-6 sm:mb-8 flex flex-col gap-4">
-        <div className="flex items-start justify-between flex-wrap gap-4">
-          <div className="flex items-start gap-3 sm:gap-4">
-            <button
-              onClick={() => navigate("/")}
-              className="p-2 sm:p-3 rounded-full bg-white shadow hover:shadow-md transition"
-            >
-              <FaArrowLeft className="text-gray-600 text-sm sm:text-base" />
-            </button>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#090510] via-[#10081c] to-[#160d2b] px-4 py-8 relative overflow-hidden"
+    >
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-180px] left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-gradient-to-r from-violet-600/20 via-purple-500/20 to-indigo-500/20 blur-[120px] rounded-full" />
 
-            <div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 leading-tight">
-                Interview Analytics Dashboard
-              </h1>
-              <p className="text-gray-500 text-sm sm:text-base mt-1">
-                AI-Powered Performance Insights
-              </p>
+        <div className="absolute bottom-[-180px] left-[-150px] w-[450px] h-[450px] bg-violet-600/15 blur-[130px] rounded-full" />
+
+        <div className="absolute top-[200px] right-[-180px] w-[450px] h-[450px] bg-indigo-600/15 blur-[130px] rounded-full" />
+      </div>
+
+      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl grid md:grid-cols-2 overflow-hidden relative z-10">
+        <motion.div
+          initial={{ x: -80, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.7 }}
+          className="relative bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 p-8 md:p-12 flex flex-col justify-center overflow-hidden"
+        >
+          <div className="absolute top-[-160px] right-[-120px] w-[350px] h-[350px] bg-white/10 blur-[90px] rounded-full" />
+
+          <div className="absolute bottom-[-180px] left-[-120px] w-[350px] h-[350px] bg-indigo-950/30 blur-[100px] rounded-full" />
+
+          <div className="relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-4 py-2 rounded-full text-sm text-white/90 mb-6"
+            >
+              <span className="w-2 h-2 rounded-full bg-white shadow-lg shadow-white/50" />
+              AI-Powered Interview
+            </motion.div>
+
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+              Start Your
+              <br />
+              <span className="text-white/90">AI Interview</span>
+            </h2>
+
+            <p className="text-violet-100 mb-10 leading-relaxed max-w-md">
+              Practise real interview scenarios powered by AI. Improve
+              communication, technical skills, and confidence before your
+              actual interview.
+            </p>
+
+            <div className="space-y-4">
+              {[
+                {
+                  icon: <FaUserTie className="text-violet-600 text-xl" />,
+                  text: "Choose Role & Experience",
+                },
+                {
+                  icon: (
+                    <FaMicrophoneAlt className="text-violet-600 text-xl" />
+                  ),
+                  text: "Smart Voice Interview",
+                },
+                {
+                  icon: <FaChartLine className="text-violet-600 text-xl" />,
+                  text: "Performance Analytics",
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ y: 30, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 + index * 0.15 }}
+                  whileHover={{ scale: 1.03, x: 5 }}
+                  className="flex items-center gap-4 bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-lg cursor-pointer border border-white/20"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center">
+                    {item.icon}
+                  </div>
+
+                  <span className="text-gray-800 font-medium">
+                    {item.text}
+                  </span>
+                </motion.div>
+              ))}
             </div>
           </div>
+        </motion.div>
 
-          <button
-          onClick={downloadPDF}
-          className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-900 text-white py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl sm:rounded-2xl shadow-md transition-all duration-300 font-semibold text-sm sm:text-base">
-            Download PDF
-          </button>
-        </div>
-      </div>
+        <motion.div
+          initial={{ x: 80, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.7 }}
+          className="p-8 md:p-12 bg-[#faf9fc]"
+        >
+          <div className="mb-8">
+            <div className="inline-flex items-center gap-2 bg-violet-50 border border-violet-100 px-3 py-1.5 rounded-full text-xs font-medium text-violet-700 mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-violet-500" />
+              Interview Setup
+            </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        <div className="space-y-6 mt-8">
-            <motion.div
-            initial={{opacity:0}}
-            animate={{opacity:1}}
-            className="bg-white rounded-2xl sm:rounded-3xl shadow-lg p-6 sm:p-8 text-center">
-                <h3 className="text-gray-500 mb-4 sm:mb-6 text-sm sm:text-base">
-                    Overall Performance
-                </h3>
-                <div className='relative w-20 h-36 sm:w-25 sm:h-25 mx-auto'>
-                            <CircularProgressbar
-                            value={percentage}
-                            text={`${score}/10`}
-                            styles = {buildStyles({
-                                textSize: "18px",
-                                pathColor: "#10b981",
-                                textColor: "#ef4444",
-                                trailColor: "#e5e7eb"
-                            })} 
-                            />
-                        </div>
-                        <p className="text-gray-400 mt-3 text-xs sm:text-sm">
-                            Out of 10
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+              Interview Set-up
+            </h2>
+
+            <p className="text-gray-500 text-sm mt-2">
+              Configure your interview and get ready to practice.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="relative">
+              <FaUserTie className="absolute top-4 left-4 text-violet-500" />
+
+              <input
+                type="text"
+                placeholder="Enter Role"
+                className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-300 outline-none transition text-gray-800 placeholder:text-gray-400 shadow-sm"
+                onChange={(e) => setRole(e.target.value)}
+                value={role}
+              />
+            </div>
+
+            <div className="relative">
+              <FaBriefcase className="absolute top-4 left-4 text-violet-500" />
+
+              <input
+                type="text"
+                placeholder="Enter Experience (e.g. 2 years)"
+                className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-300 outline-none transition text-gray-800 placeholder:text-gray-400 shadow-sm"
+                onChange={(e) => setExperience(e.target.value)}
+                value={experience}
+              />
+            </div>
+
+            <select
+              value={mode}
+              onChange={(e) => setMode(e.target.value)}
+              className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-300 outline-none transition text-gray-700 shadow-sm cursor-pointer"
+            >
+              <option value="Technical">Technical Interview</option>
+              <option value="HR">HR Interview</option>
+            </select>
+
+            {!analysisDone && (
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                onClick={() =>
+                  document.getElementById("resumeUpload").click()
+                }
+                className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-violet-500 hover:bg-violet-50/60 transition bg-white"
+              >
+                <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center">
+                  <FaFileUpload className="text-2xl text-violet-600" />
+                </div>
+
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  id="resumeUpload"
+                  className="hidden"
+                  onChange={(e) => setResumeFile(e.target.files[0])}
+                />
+
+                <p className="text-gray-600 font-medium">
+                  {resumeFile
+                    ? resumeFile.name
+                    : "Click to upload resume (Optional)"}
                 </p>
 
-                <div className="mt-4">
-                    <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                        {performanceText}
-                    </p>
-                    <p className="text-gray-500 text-xs sm:text-sm mt-1">
-                        {shortTagline}
-                    </p>
-                </div>
-            </motion.div>
+                <p className="text-xs text-gray-400 mt-1">
+                  PDF format recommended
+                </p>
 
-            <motion.div
-            initial={{opacity:0}}
-            animate={{opacity:1}}
-            className="bg-white rounded-2xl sm:rounded-3xl shadow-lg p-6 sm:p-8">
-                <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-6">
-                    Skill Evaluation
-                </h3>
+                {resumeFile && (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleUploadResume();
+                    }}
+                    className="mt-4 bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 text-white px-5 py-2.5 rounded-lg hover:opacity-95 transition shadow-md shadow-violet-500/20 font-medium"
+                  >
+                    {analyzing ? "Analyzing..." : "Analyze Resume"}
+                  </motion.button>
+                )}
+              </motion.div>
+            )}
 
-                <div className="space-y-5">
-                    {
-                        skills.map((s,i)=>(
-                            <div key={i}>
-                                <div className="flex justify-between mb-2 text-sm sm:text-base">
-                                    <span>{s.label}</span>
-                                    <span className="font-semibold text-green-600">{s.value}</span>
-                                </div>
+            {analysisDone && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-violet-50/70 border border-violet-100 rounded-xl p-5 space-y-4"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Resume Analysis Result
+                  </h3>
 
-                                <div className="bg-gray-200 h-2 sm:h-3 rounded-full">
-                                    <div className="bg-green-500 h-full rounded-full" style={{width: `${s.value * 10}%`}}>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    }
-                </div>
-            </motion.div>
-        </div>
-
-        <div className="lg:col-span-2 space-y-6">
-            <motion.div
-            initial={{opacity:0}}
-            animate={{opacity:1}}
-            className="bg-white rounded-2xl sm:rounded-3xl shadow-lg p-5 sm:p-8">
-                <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6">
-                    Performance Trend
-                </h3>
-                <div className="h-64 sm:h-72">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={questionScoreData}>
-                        <CartesianGrid strokeDasharray="3 3"/>
-                        <XAxis dataKey="name"/>
-                        <YAxis domain={[0,10]}/>
-                        <Tooltip/>
-                        <Area type="monotone" dataKey="score" stroke="#22c55e" fill="#bbf7d0" strokeWidth={3}/>
-    
-                        </AreaChart>
-                    </ResponsiveContainer>
-
-                </div>
-
-            </motion.div>
-
-            <motion.div
-            initial={{opacity:0}}
-            animate={{opacity:1}}
-            className="bg-white rounded-2xl sm:rounded-3xl shadow-lg p-5 sm:p-8">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-6">
-                Question Breakdown
-              </h3>
-              <div className="space-y-6">
-                {questionWiseScore.map((q,i)=>(
-                  <div key={i} className="bg-gray-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-gray-200">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
-                      <div>
-                        <p className="text-xs text-gray-400">
-                          Question {i+1}
-                        </p>
-
-                        <p className="font-semibold text-gray-800 text-sm sm:text-base leading-relaxed">
-                          {q.question || "Question not available"}
-                        </p>
-                      </div>
-
-                      <div className="bg-green-100 text-green-600 px-3 py-1 rounded-full font-bold text-sm sm:text-sm w-fit">
-                        {q.score ?? 0}/10
-                      </div>
-                    </div>
-
-                    <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
-                      <p className="text-xs text-green-600 font-semibold mb-1">
-                        AI Feedback
-                      </p>
-                      <p className="text-sm text-gray-700 leading-relaxed">
-                        {q.feedback && q.feedback.trim() !== ""
-                        ? q.feedback
-                        : "No feedback available for this question."}
-                      </p>
-
-                    </div>
-
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-violet-600 to-indigo-500 flex items-center justify-center text-white text-sm">
+                    ✓
                   </div>
-                ))}
-              </div>
+                </div>
 
-            </motion.div>
+                {projects.length > 0 && (
+                  <div>
+                    <p className="font-medium text-gray-700 mb-1">
+                      Projects:
+                    </p>
 
-        </div>
+                    <ul className="list-disc list-inside text-gray-600 space-y-1">
+                      {projects.map((p, i) => (
+                        <li key={i}>{p}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
+                {skills.length > 0 && (
+                  <div>
+                    <p className="font-medium text-gray-700 mb-2">
+                      Skills:
+                    </p>
+
+                    <div className="flex flex-wrap gap-2">
+                      {skills.map((s, i) => (
+                        <span
+                          key={i}
+                          className="bg-gradient-to-r from-violet-100 to-indigo-100 text-violet-800 border border-violet-200 px-3 py-1 rounded-full text-sm"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            <motion.button
+              onClick={handleStart}
+              disabled={!role || !experience || loading}
+              whileHover={{
+                scale: !role || !experience || loading ? 1 : 1.02,
+              }}
+              whileTap={{
+                scale: !role || !experience || loading ? 1 : 0.97,
+              }}
+              className="w-full bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 disabled:from-gray-400 disabled:via-gray-400 disabled:to-gray-500 text-white py-3.5 rounded-full text-lg font-semibold transition duration-300 shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40 disabled:cursor-not-allowed"
+            >
+              {loading ? "Starting..." : "Start Interview"}
+            </motion.button>
+          </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-export default Step3Report;
+export default Step1SetUp;
